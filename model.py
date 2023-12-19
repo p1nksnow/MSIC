@@ -398,7 +398,7 @@ class HealthConditionModel(nn.Module):
             
             if s_seq.shape[1] > 1:
                 src_mask_1 = torch.triu(torch.full((s_seq.shape[1]-1, s_seq.shape[1]-1), float('-inf')), diagonal=1).to(self.device)
-                sym_pre = self.decoder_s(torch.cat([s_enc[:,:-1,:],z_new[:,:-1,:]],dim=-1),mask=src_mask_1) #(1,seq,dim*3)
+                sym_pre = self.decoder_s(torch.cat([s_enc[:,1:,:],z_new[:,:-1,:]],dim=-1),mask=src_mask_1) #(1,seq,dim*3)
                 sym_pre = self.s_linear(sym_pre).squeeze(0) #(seq,sym_voc_size)
                 sym_truth = torch.zeros_like(sym_pre)
                 
@@ -409,7 +409,7 @@ class HealthConditionModel(nn.Module):
                         sym_truth[i-1,sym_id_labels[i][j]] = 1.0
                 rc_loss_sym = F.binary_cross_entropy_with_logits(sym_pre,sym_truth) #不用bceloss 防溢出
 
-                diag_pre = self.decoder_d(torch.cat([d_enc[:,:-1,:],z_new[:,:-1,:]],dim=-1),mask=src_mask_1) #(1,seq,dim*3)
+                diag_pre = self.decoder_d(torch.cat([d_enc[:,1:,:],z_new[:,:-1,:]],dim=-1),mask=src_mask_1) #(1,seq,dim*3)
                 diag_pre = self.d_linear(diag_pre).squeeze(0) #(seq,diag_voc_size)
                 diag_truth = torch.zeros_like(diag_pre)
 
@@ -486,10 +486,10 @@ class HealthConditionModel(nn.Module):
             
             if s_seq.shape[1] > 1:
                 src_mask_1 = torch.triu(torch.full((s_seq.shape[1]-1, s_seq.shape[1]-1), float('-inf')), diagonal=1).to(self.device)
-                sym_pre = self.decoder_s(torch.cat([s_enc[:,:-1,:],z_new[:,:-1,:]],dim=-1),mask=src_mask_1) #(1,seq,dim*3)
+                sym_pre = self.decoder_s(torch.cat([s_enc[:,1:,:],z_new[:,:-1,:]],dim=-1),mask=src_mask_1) #(1,seq,dim*3)
                 sym_pre = self.sigmoid(self.s_linear(sym_pre)).squeeze(0) #(seq,sym_voc_size)
 
-                diag_pre = self.decoder_d(torch.cat([d_enc[:,:-1,:],z_new[:,:-1,:]],dim=-1),mask=src_mask_1) #(1,seq,dim*3)
+                diag_pre = self.decoder_d(torch.cat([d_enc[:,1:,:],z_new[:,:-1,:]],dim=-1),mask=src_mask_1) #(1,seq,dim*3)
                 diag_pre = self.sigmoid(self.d_linear(diag_pre)).squeeze(0) #(seq,diag_voc_size)
                 
             else:
