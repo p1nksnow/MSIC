@@ -1,2 +1,2 @@
 # MSIC
-Official implementation for "Collaborative Synthesis of Patient Records through Multi-Visit Health State Inference" (more will be updated)
+Official implementation for "Collaborative Synthesis of Patient Records through Multi-Visit Health State Inference"
